@@ -1,0 +1,34 @@
+name: Test Github Packages for Multi-Arch containers
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  release:
+
+jobs:
+
+  per-arch:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - arm64v8
+          - arm32v7
+          - amd64
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Setup QEMU user-mode emulation
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qemu qemu-user-static binfmt-support --no-install-recommends
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+    - name: Log docker into Github Packages
+      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com --username ${{ github.actor }} --password-stdin
+
+    - name: Create and push per-arch labels, create and push multi-arch label
+      run: make test
