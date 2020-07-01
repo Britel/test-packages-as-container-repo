@@ -11,6 +11,34 @@ jobs:
 
   per-arch:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - arm64
+          - arm32
+          - amd64
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Setup QEMU user-mode emulation
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qemu qemu-user-static binfmt-support --no-install-recommends
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+    - name: Log docker into Github Packages
+      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com --username ${{ github.actor }} --password-stdin
+
+    - name: Create per-arch labels
+      run: make test-build-${{ matrix.arch }}
+
+    - name: Push per-arch labels
+      run: make test-docker-per-arch-${{ matrix.arch }}
+
+  multi-arch:
+    runs-on: ubuntu-latest
+    needs: per-arch
 
     steps:
     - name: Checkout repo
@@ -25,5 +53,6 @@ jobs:
     - name: Log docker into Github Packages
       run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com --username ${{ github.actor }} --password-stdin
 
-    - name: Create and push per-arch labels, create and push multi-arch label
-      run: make test
+
+    - name: Create and push multi-arch label
+      run: make test-docker-push-multi-arch-create
