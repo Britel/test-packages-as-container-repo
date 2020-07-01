@@ -2,6 +2,8 @@
 
 This is a test of whether creating multi-arch docker images works with Github Packages.
 
+Status: ![Test Github Packages for Multi-Arch containers](https://github.com/bfjelds/test-packages-as-container-repo/workflows/Test%20Github%20Packages%20for%20Multi-Arch%20containers/badge.svg)
+
 ```bash
 git clone https://github.com/bfjelds/test-packages-as-container-repo
 cd test-packages-as-container-repo
