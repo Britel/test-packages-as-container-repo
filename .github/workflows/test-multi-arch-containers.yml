@@ -1,6 +1,7 @@
 name: Test Github Packages for Multi-Arch containers
 
 on:
+  workflow_dispatch:
   schedule:
   - cron: "0 0 * * *"
   push:
@@ -29,8 +30,8 @@ jobs:
         sudo apt-get install -y qemu qemu-user-static binfmt-support --no-install-recommends
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Log docker into Github Packages
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com --username ${{ github.actor }} --password-stdin
+    - name: Log docker into Github Container Registry
+      run: echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Create per-arch labels
       run: make test-build-${{ matrix.arch }}
@@ -52,9 +53,29 @@ jobs:
         sudo apt-get install -y qemu qemu-user-static binfmt-support --no-install-recommends
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Log docker into Github Packages
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com --username ${{ github.actor }} --password-stdin
-
+    - name: Log docker into Github Container Registry
+      run: echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Create and push multi-arch label
-      run: make test-docker-push-multi-arch-create
+      run: |
+        make test-docker-push-multi-arch-create
+        make test-docker-push-multi-arch-inspect
+        make test-docker-push-multi-arch-push
+
+  per-arch-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - arm64
+          - arm32
+          - amd64
+    needs: multi-arch
+
+    steps:
+    - name: Log docker into Github Container Registry
+      run: echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Pull multi-arch label
+      run: make test-docker-push-multi-arch-pull
+

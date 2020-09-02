@@ -2,7 +2,7 @@ BUILD_AMD64 ?= 1
 BUILD_ARM32 ?= 1
 BUILD_ARM64 ?= 1
 
-PREFIX ?= docker.pkg.github.com/bfjelds/test-packages-as-container-repo
+PREFIX ?= ghcr.io/bfjelds
 LABEL_PREFIX ?= v0.1.0
 
 CACHE_OPTION ?=
@@ -68,5 +68,13 @@ ifeq (1, ${BUILD_ARM64})
 endif
 
 
+test-docker-push-multi-arch-inspect:
+	$(ENABLE_DOCKER_MANIFEST) docker manifest inspect $(PREFIX)/test:$(LABEL_PREFIX)
+
+
 test-docker-push-multi-arch-push:
 	$(ENABLE_DOCKER_MANIFEST) docker manifest push $(PREFIX)/test:$(LABEL_PREFIX)
+
+
+test-docker-push-multi-arch-pull:
+	$(ENABLE_DOCKER_MANIFEST) docker pull $(PREFIX)/test:$(LABEL_PREFIX)
