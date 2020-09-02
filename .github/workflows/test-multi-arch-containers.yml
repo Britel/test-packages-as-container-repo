@@ -31,9 +31,7 @@ jobs:
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Log docker into Github Container Registry
-      run: |
-        echo ${{ secrets.CI_TOKEN }} | tail -c 6  
-        echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      run: echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Create per-arch labels
       run: make test-build-${{ matrix.arch }}
@@ -56,9 +54,30 @@ jobs:
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Log docker into Github Container Registry
+      run: echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Create and push multi-arch label
       run: |
-        echo ${{ secrets.CI_TOKEN }} | tail -c 6  
-        echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        make test-docker-push-multi-arch-create 
+        make test-docker-push-multi-arch-push
+
+  per-arch-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - arm64
+          - arm32
+          - amd64
+    needs: multi-arch
+
+    steps:
+    - name: Log docker into Github Container Registry
+      run: echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Create and push multi-arch label
       run: make test-docker-push-multi-arch-create 
+
+    - name: Pull multi-arch label
+      run: make test-docker-push-multi-arch-pull
+

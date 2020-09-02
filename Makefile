@@ -70,3 +70,7 @@ endif
 
 test-docker-push-multi-arch-push:
 	$(ENABLE_DOCKER_MANIFEST) docker manifest push $(PREFIX)/test:$(LABEL_PREFIX)
+
+
+test-docker-push-multi-arch-pull:
+	$(ENABLE_DOCKER_MANIFEST) docker pull $(PREFIX)/test:$(LABEL_PREFIX)
