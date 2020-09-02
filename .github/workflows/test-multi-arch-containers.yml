@@ -58,7 +58,8 @@ jobs:
 
     - name: Create and push multi-arch label
       run: |
-        make test-docker-push-multi-arch-create 
+        make test-docker-push-multi-arch-create
+        make test-docker-push-multi-arch-inspect
         make test-docker-push-multi-arch-push
 
   per-arch-test:
@@ -74,9 +75,6 @@ jobs:
     steps:
     - name: Log docker into Github Container Registry
       run: echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-    - name: Create and push multi-arch label
-      run: make test-docker-push-multi-arch-create 
 
     - name: Pull multi-arch label
       run: make test-docker-push-multi-arch-pull

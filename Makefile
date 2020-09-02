@@ -68,6 +68,10 @@ ifeq (1, ${BUILD_ARM64})
 endif
 
 
+test-docker-push-multi-arch-inspect:
+	$(ENABLE_DOCKER_MANIFEST) docker manifest inspect $(PREFIX)/test:$(LABEL_PREFIX)
+
+
 test-docker-push-multi-arch-push:
 	$(ENABLE_DOCKER_MANIFEST) docker manifest push $(PREFIX)/test:$(LABEL_PREFIX)
 
