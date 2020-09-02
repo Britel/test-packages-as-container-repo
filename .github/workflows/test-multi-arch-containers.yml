@@ -30,7 +30,7 @@ jobs:
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Log docker into Github Packages
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com --username ${{ github.actor }} --password-stdin
+      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io --username ${{ github.actor }} --password-stdin
 
     - name: Create per-arch labels
       run: make test-build-${{ matrix.arch }}
@@ -53,7 +53,7 @@ jobs:
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Log docker into Github Packages
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com --username ${{ github.actor }} --password-stdin
+      run: echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io --username ${{ github.actor }} --password-stdin
 
 
     - name: Create and push multi-arch label

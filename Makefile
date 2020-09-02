@@ -2,7 +2,7 @@ BUILD_AMD64 ?= 1
 BUILD_ARM32 ?= 1
 BUILD_ARM64 ?= 1
 
-PREFIX ?= docker.pkg.github.com/bfjelds/test-packages-as-container-repo
+PREFIX ?= ghcr.io/bfjelds
 LABEL_PREFIX ?= v0.1.0
 
 CACHE_OPTION ?=
