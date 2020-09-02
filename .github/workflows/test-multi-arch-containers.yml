@@ -1,6 +1,7 @@
 name: Test Github Packages for Multi-Arch containers
 
 on:
+  workflow_dispatch:
   schedule:
   - cron: "0 0 * * *"
   push:
