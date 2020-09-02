@@ -30,8 +30,10 @@ jobs:
         sudo apt-get install -y qemu qemu-user-static binfmt-support --no-install-recommends
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Log docker into Github Packages
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io --username ${{ github.actor }} --password-stdin
+    - name: Log docker into Github Container Registry
+      run: |
+        echo ${{ secrets.CI_TOKEN }} | tail -c 6  
+        echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Create per-arch labels
       run: make test-build-${{ matrix.arch }}
@@ -53,9 +55,9 @@ jobs:
         sudo apt-get install -y qemu qemu-user-static binfmt-support --no-install-recommends
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Log docker into Github Packages
+    - name: Log docker into Github Container Registry
       run: |
-        echo ${{ secrets.CI_TOKEN }} | tail -c 6 
+        echo ${{ secrets.CI_TOKEN }} | tail -c 6  
         echo ${{ secrets.CI_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Create and push multi-arch label
