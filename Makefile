@@ -2,7 +2,7 @@ BUILD_AMD64 ?= 1
 BUILD_ARM32 ?= 1
 BUILD_ARM64 ?= 1
 
-PREFIX ?= ghcr.io/bfjelds
+PREFIX ?= ghcr.io/bfjelds/foo
 LABEL_PREFIX ?= v0.1.0
 
 CACHE_OPTION ?=
